@@ -1,0 +1,344 @@
+ 'If bDel(i) Then m_Blocks(X, Y - (UBound(bDel) - i + 1)).Visible = False
+    H = H - Int(H)
+    L = Abs((Int(L) And 1) - L + Int(L))
+    S = Abs((Int(S) And 1) - S + Int(S))
+
+            ' Just to show it can be in VB ;)
+'            fGame.pGrid.CurrentX = X1 + g_Game.Size \ 2 - fGame.pGrid.TextWidth(tBlock.Letter) \ 2
+'            fGame.pGrid.CurrentY = Y1 + g_Game.Size \ 2 - fGame.pGrid.TextHeight(tBlock.Letter) \ 2
+'            fGame.pGrid.Print tBlock.Letter
+'Public Function DelSection(ByVal sSect As String, ByVal sFile As String) As Long
+'
+'
+'    DelSection = API_WriteString(sSect, NULS, NULS, sFile)
+'
+'    Debug.Assert DelSection
+'
+'End Function
+
+'Public Function GetSections(ByRef Sections() As String, ByVal File As String) As Long
+'
+'' Fill Sections array all the section names in the ini and set GetSections
+'' equal to the upper bound of the array.
+'
+'Dim lRet   As Long
+'Dim sBuf   As String
+'
+'    GetSections = -1
+'
+'    ' Allocate a buffer.
+'    sBuf = String(2 ^ 15 - 1, vbNullChar)
+'
+'    ' Get section names, lRet is chars (excluding null teminator).
+'    lRet = API_GetSectionNames(sBuf, Len(sBuf), File)
+'
+'    ' buffer=dog\0cat\0\0, r=8
+'
+'    ' Split buffer on \0 into an array.
+'    If lRet > 1 Then
+'        sBuf = Left$(sBuf, lRet - 1)
+'        Sections = Split(sBuf, vbNullChar)
+'        GetSections = UBound(Sections)
+'    End If
+'
+'End Function
+'
+'Public Function GetPairs(ByVal sSect As String, ByRef sPairs() As String, ByVal sFile As String) As Long
+'
+'' Pairs is filled with the key/values pairs of the specified section in the
+'' form of "key=value"
+'
+'Dim lRet    As Long
+'Dim sBuf    As String
+'
+'    GetPairs = -1
+'
+'    sBuf = String(2 ^ 15 - 1, vbNullChar)
+'
+'    ' Get number of returned chars (excluding null teminator).
+'    lRet = API_GetSection(sSect, sBuf, Len(sBuf), sFile)
+'
+'    If lRet > 1 Then
+'        sBuf = Left$(sBuf, lRet - 1)
+'        sPairs = Split(sBuf, vbNullChar)
+'        GetPairs = UBound(sPairs)
+'    End If
+'
+'End Function
+
+    
+'    Select Case eMusic
+'
+'        Case mcMusic01
+'            Call pPlayMusic(App.Path & "\Music\Music01.mid")
+'
+'        Case mcMusic02
+'            Call pPlayMusic(App.Path & "\Music\Music02.mid")
+'
+'    End Select
+
+Dim sShort As String
+
+    sShort = String$(256, vbNullChar)
+    r = GetShortPathName(sFile, sShort, Len(sShort))
+    
+    sShort = Left$(sShort, InStr(sShort, vbNullChar) - 1)
+
+    sBuf = String$(256, 0)
+
+
+    ' Open the device.
+    'sCmd = "open " & sShort & " type sequencer alias Music01"
+
+Private Const BDR_RAISEDINNER As Long = &H4
+Private Const BDR_RAISEDOUTER As Long = &H1
+Private Const BDR_SUNKENINNER As Long = &H8
+Private Const BDR_SUNKENOUTER As Long = &H2
+
+Private Const BF_LEFT As Long = &H1
+Private Const BF_TOP As Long = &H2
+Private Const BF_RIGHT As Long = &H4
+Private Const BF_BOTTOM As Long = &H8
+Private Const BF_FLAT As Long = &H4000
+Private Const BF_SOFT As Long = &H1000
+Private Const BF_RECT As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
+
+Private Const EDGE_BUMP As Long = (BDR_RAISEDOUTER Or BDR_SUNKENINNER)
+Private Const EDGE_ETCHED As Long = (BDR_SUNKENOUTER Or BDR_RAISEDINNER)
+Private Const EDGE_RAISED As Long = (BDR_RAISEDOUTER Or BDR_RAISEDINNER)
+Private Const EDGE_SUNKEN As Long = (BDR_SUNKENOUTER Or BDR_SUNKENINNER)
+
+Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, ByRef qrc As RECT, ByVal edge As Long, ByVal grfFlags As Long) As Long
+Private Type RECT
+    nLeft   As Long
+    nTop    As Long
+    nRight  As Long
+    nBottom As Long
+End Type
+
+'Private Sub Block_Draw(ByRef blCurrent As udtBlock, ByVal bErase As Boolean)
+'
+'' Use DrawEdge or DrawFrameContol, but with your own custom color, not
+'' vbButtonFace, etc.
+'
+'Dim lRet    As Long
+'Dim RCT     As RECT
+'Dim lStep   As Long
+'Dim X       As Long
+'Dim Y       As Long
+'
+'    X = blCurrent.X * BLOCK_SIZE
+'    Y = blCurrent.Y * BLOCK_SIZE
+'
+'    RCT.nLeft = X
+'    RCT.nTop = Y
+'    RCT.nRight = X + BLOCK_SIZE
+'    RCT.nBottom = Y + BLOCK_SIZE
+'
+'    lStep = BLOCK_SIZE - 1
+'
+'    pGrid.Line (X, Y)-Step(lStep, lStep), vbWhite, BF
+'
+'    lRet = DrawEdge(pGrid.hDC, RCT, EDGE_RAISED, BF_RECT)
+'
+'    pGrid.DrawMode = vbMaskPen
+'
+'    pGrid.Line (X, Y)-Step(lStep, lStep), blCurrent.Color, BF
+'
+'    pGrid.DrawMode = vbCopyPen
+'
+'    pGrid.Line (X, Y)-Step(lStep, lStep), vbBlack, B
+'
+'    If Not bErase Then
+'        pGrid.CurrentX = X + BLOCK_SIZE \ 2 - pGrid.TextWidth("A") \ 2
+'        pGrid.CurrentY = Y + BLOCK_SIZE \ 2 - pGrid.TextHeight("A") \ 2
+'        pGrid.Print "A"
+'    End If
+'
+'End Sub
+
+'
+'Private Sub Block_Draw(ByRef tBlock As udtBlock, _
+'                       ByVal bErase As Boolean)
+'
+'Dim lColor As Long
+'
+'    ' Black border.
+'    lColor = IIf(bErase, pGrid.BackColor, vbBlack)
+'    pGrid.Line (tBlock.X * BLOCK_SIZE, tBlock.Y * BLOCK_SIZE)-Step _
+'               (BLOCK_SIZE - 1, BLOCK_SIZE - 1), lColor, BF
+'
+'    ' Highlight.
+'    lColor = IIf(Not bErase, &HCC0000, pGrid.BackColor)
+'    pGrid.Line (tBlock.X * BLOCK_SIZE + 1, tBlock.Y * BLOCK_SIZE + 1)-Step _
+'                 (BLOCK_SIZE - 3, BLOCK_SIZE - 3), lColor, B
+'
+'    ' Shadow.
+'    lColor = IIf(Not bErase, vbCyan, pGrid.BackColor)
+'    pGrid.Line (tBlock.X * BLOCK_SIZE + 1, tBlock.Y * BLOCK_SIZE + 1)-Step _
+'                 (BLOCK_SIZE - 4, BLOCK_SIZE - 4), lColor, B
+'
+'    ' Fill color.
+'    lColor = IIf(Not bErase, vbBlue, pGrid.BackColor)
+'    pGrid.Line (tBlock.X * BLOCK_SIZE + 2, tBlock.Y * BLOCK_SIZE + 2)-Step _
+'                 (BLOCK_SIZE - 5, BLOCK_SIZE - 5), lColor, BF
+'
+'    If Not bErase Then
+'        pGrid.CurrentX = (tBlock.X * BLOCK_SIZE) + BLOCK_SIZE \ 2 - pGrid.TextWidth(tBlock.Letter) \ 2
+'        pGrid.CurrentY = (tBlock.Y * BLOCK_SIZE) + BLOCK_SIZE \ 2 - pGrid.TextHeight(tBlock.Letter) \ 2
+'        pGrid.Print tBlock.Letter
+'    End If
+'
+'End Sub
+
+
+'    ' For each row..
+'    For r = 0 To BLOCK_ROWS - 1
+'
+'        ' Assume completeness.
+'        bComp = True
+'
+'        ' For each column..
+'        For c = 0 To BLOCK_COLS - 1
+'
+'            ' If ID-grid is empty (no part of shape occupies).
+'            'If (Grid(c, r) = 0) Then
+'            If (Not m_Blocks(c, r).Visible) Then
+'
+'                ' Line is not complete.  Exit immeadiately.
+'                bComp = False
+'                Exit For
+'
+'            End If
+'
+'        Next
+'
+'        ' If line is found to be complete.
+'        If bComp Then
+'
+'            iLines = iLines + 1
+'
+'            For r2 = r To 1 Step -1
+'
+'                For c2 = 0 To BLOCK_COLS - 1
+'                    m_Blocks(c2, r2).Visible = m_Blocks(c2, r2 - 1).Visible
+'                    m_Blocks(c2, r2).Letter = m_Blocks(c2, r2 - 1).Letter
+'                    If r2 - 1 = 0 Then Debug.Assert m_Blocks(c2, r2 - 1).Visible = False
+'
+'                Next
+'
+'            Next
+'
+'        End If
+'    Next
+
+    
+'    m_Freqs(0).Letter = "E": m_Freqs(0).Weight = 56.88: m_Freqs(0).Frequency = 0.1116
+'    m_Freqs(1).Letter = "A": m_Freqs(1).Weight = 43.31: m_Freqs(1).Frequency = 0.085
+'    m_Freqs(2).Letter = "R": m_Freqs(2).Weight = 38.64: m_Freqs(2).Frequency = 0.0758
+'    m_Freqs(3).Letter = "I": m_Freqs(3).Weight = 38.45: m_Freqs(3).Frequency = 0.0754
+'    m_Freqs(4).Letter = "O": m_Freqs(4).Weight = 36.51: m_Freqs(4).Frequency = 0.0716
+'
+'    m_Freqs(5).Letter = "T": m_Freqs(5).Weight = 35.43: m_Freqs(5).Frequency = 0.0695
+'    m_Freqs(6).Letter = "N": m_Freqs(6).Weight = 33.92: m_Freqs(6).Frequency = 0.0665
+'    m_Freqs(7).Letter = "S": m_Freqs(7).Weight = 29.23: m_Freqs(7).Frequency = 0.0574
+'    m_Freqs(8).Letter = "L": m_Freqs(8).Weight = 27.98: m_Freqs(8).Frequency = 0.0549
+'    m_Freqs(9).Letter = "C": m_Freqs(9).Weight = 23.13: m_Freqs(9).Frequency = 0.0454
+'
+'    m_Freqs(10).Letter = "U": m_Freqs(10).Weight = 18.51: m_Freqs(10).Frequency = 0.0363
+'    m_Freqs(11).Letter = "D": m_Freqs(11).Weight = 17.25: m_Freqs(11).Frequency = 0.0338
+'    m_Freqs(12).Letter = "P": m_Freqs(12).Weight = 16.14: m_Freqs(12).Frequency = 0.0317
+'    m_Freqs(13).Letter = "M": m_Freqs(13).Weight = 15.36: m_Freqs(13).Frequency = 0.0301
+'    m_Freqs(14).Letter = "H": m_Freqs(14).Weight = 15.31: m_Freqs(14).Frequency = 0.03
+'
+'    m_Freqs(15).Letter = "G": m_Freqs(15).Weight = 12.59: m_Freqs(15).Frequency = 0.0247
+'    m_Freqs(16).Letter = "B": m_Freqs(16).Weight = 10.56: m_Freqs(16).Frequency = 0.0207
+'    m_Freqs(17).Letter = "F": m_Freqs(17).Weight = 9.24: m_Freqs(17).Frequency = 0.0181
+'    m_Freqs(18).Letter = "Y": m_Freqs(18).Weight = 9.06: m_Freqs(18).Frequency = 0.0178
+'    m_Freqs(19).Letter = "W": m_Freqs(19).Weight = 6.57: m_Freqs(19).Frequency = 0.0129
+'
+'    m_Freqs(20).Letter = "K": m_Freqs(20).Weight = 5.61: m_Freqs(20).Frequency = 0.011
+'    m_Freqs(21).Letter = "V": m_Freqs(21).Weight = 5.13: m_Freqs(21).Frequency = 0.0101
+'    m_Freqs(22).Letter = "X": m_Freqs(22).Weight = 1.48: m_Freqs(22).Frequency = 0.0029
+'    m_Freqs(23).Letter = "Z": m_Freqs(23).Weight = 1.39: m_Freqs(23).Frequency = 0.0027
+'    m_Freqs(24).Letter = "J": m_Freqs(24).Weight = 1.03: m_Freqs(24).Frequency = 0.0021
+'
+'    m_Freqs(25).Letter = "Q": m_Freqs(25).Weight = 1#: m_Freqs(25).Frequency = 0.002
+
+
+Private Sub TestRandomLetter()
+
+Dim i           As Integer
+Dim j           As Integer
+Dim zRand       As Single
+Dim zTotal      As Single
+Dim iSlots(25)  As Integer
+Dim sChr        As String
+Dim tFreqs(25)  As udtLetterFrequency
+Dim lTotalChars As Long
+
+    ' analyse file
+    For i = 0 To UBound(m_Words.Words)
+        For j = 1 To Len(m_Words.Words(i))
+            lTotalChars = lTotalChars + 1
+            sChr = Mid$(m_Words.Words(i), j, 1)
+            tFreqs(Asc(sChr) - 65).Frequency = tFreqs(Asc(sChr) - 65).Frequency + 1
+        Next
+    Next
+    
+    For i = 0 To 25
+        tFreqs(i).Letter = Chr$(i + 65)
+        tFreqs(i).Frequency = tFreqs(i).Frequency / lTotalChars
+    Next
+    
+    List1.Clear
+    
+    For j = 0 To 9999
+        zTotal = 0
+        zRand = Rnd
+        For i = 25 To 0 Step -1
+            zTotal = zTotal + tFreqs(i).Frequency
+            If zRand < zTotal Then
+                iSlots(i) = iSlots(i) + 1
+                Exit For
+            End If
+        Next
+    Next
+    
+    List1.AddItem "Words.txt"
+    For i = 0 To 25
+        List1.AddItem tFreqs(i).Letter & ": " & Format$(iSlots(i) / j, "Percent")
+    Next
+    
+    Erase iSlots()
+    List2.Clear
+    
+    For j = 0 To 9999
+        zTotal = 0
+        zRand = Rnd
+        For i = 25 To 0 Step -1
+            zTotal = zTotal + m_Freqs(i).Frequency
+            If zRand < zTotal Then
+                iSlots(i) = iSlots(i) + 1
+                Exit For
+            End If
+        Next
+    Next
+    
+    List2.AddItem "Oxford Dictonary"
+    For i = 0 To 25
+        List2.AddItem m_Freqs(i).Letter & ": " & Format$(iSlots(i) / j, "Percent")
+    Next
+    
+End Sub
+
+' StrConv method of calculating frequncy.  Slighly slower than Mid$ method.
+For i = 0 To UBound(m_Words.Words)
+	a = StrConv(m_Words.Words(i), vbFromUnicode)
+        
+	For j = 0 To UBound(a)
+		m_Freqs(a(j) - 65).Frequency = m_Freqs(a(j) - 65).Frequency + 1
+	Next
+
+        lChars = lChars + j
+Next
